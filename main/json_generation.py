@@ -3,6 +3,7 @@ import os.path as osp
 from glob import glob
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import platform
 
 
 # 1. N - Normal
@@ -15,12 +16,21 @@ from sklearn.model_selection import train_test_split
 # 8. E - VEB (Ventricular escape beat)
 
 
-CLASSES = ['N', 'V', "\\", 'R', 'L', 'A', '!', 'E']
+def get_slash():
+    match (platform.system()):
+        case "Linux":
+            return '/'
+        case "Windows":
+            return "\\"
+
+
+slash = get_slash()
+CLASSES = ['N', 'V', slash, 'R', 'L', 'A', '!', 'E']
 LEAD = "MLII"
 extension = "npy"  # png for 2D
 DATA_PATH = osp.abspath(f"../data/*/*/*/*/*.{extension}")
 VAL_SIZE = 0.1  # [0, 1] for 2D
-OUTPUT_PATH = '/'.join(DATA_PATH.split("\\")[:-5])
+OUTPUT_PATH = '/'.join(DATA_PATH.split(slash)[:-5])
 RANDOM_STATE = 7
 
 
@@ -29,7 +39,7 @@ def main():
     files = glob(DATA_PATH)
     for file in glob(DATA_PATH):
         # * - unpacking operator,  _, _, _, _, _, will be equivalent for *_
-        *_, name, lead, label, filename = file.split("\\")
+        *_, name, lead, label, filename = file.split("/")
         dataset.append(
             {
                 "name": name,

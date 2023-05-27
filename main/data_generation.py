@@ -44,7 +44,7 @@ def main():
         if not np.all(np.isfinite(signal)):
             continue
         signal = scale(signal)
-        for i, (label, peak) in enumerate(zip(ann.symbol[:10], ann.sample[:10])):
+        for i, (label, peak) in enumerate(zip(ann.symbol, ann.sample)):
             if label == '/':
                 label = "\\"
             print(f"\r{sig_name} [{i + 1}/{len(ann.symbol)}]")
