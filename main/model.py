@@ -98,6 +98,3 @@ class ResNet34(Model):
         x = self.dp_2(x)
         x = self.fc_3(x)
         return x
-
-
-

@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import scale
 
 
-# peak to peak or centered
-# mode = [20, 20]
+# centering around peak
 mode = 128
 output_dir = "../data"
 
@@ -69,7 +68,7 @@ def main():
                 filename = os.path.join(d2_data_dir, f"{peak}.png")
                 plot(signal[left:right], filename)
 
-    pass
+    print("Data generation done!")
 
 
 if __name__ == "__main__":
