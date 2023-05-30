@@ -1,14 +1,8 @@
-import wfdb
-
-
-def temp():
-    ecg_record = wfdb.rdrecord('mit-bih/108')
-    wfdb.plot_wfdb(ecg_record)
-    pass
+import train
 
 
 def main():
-    temp()
+    train.main()
 
     pass
 
