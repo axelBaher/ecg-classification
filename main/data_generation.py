@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import scale
+from tqdm import tqdm
 
 
 # centering around peak
@@ -33,8 +34,7 @@ def plot(signal, filename):
     cv2.imwrite(filename, im_gray)
 
 
-def main():
-    ecg = "mit-bih/100"
+def data_gen(ecg):
     name = os.path.basename(ecg)
     record = wfdb.rdrecord(ecg)
     ann = wfdb.rdann(ecg, extension="atr")
@@ -43,10 +43,16 @@ def main():
         if not np.all(np.isfinite(signal)):
             continue
         signal = scale(signal)
-        for i, (label, peak) in enumerate(zip(ann.symbol, ann.sample)):
+        for i, (label, peak) in tqdm(enumerate(zip(ann.symbol, ann.sample)), total=len(ann.sample), desc="Peaks read"):
             if label == '/':
-                label = "\\"
-            print(f"\r{sig_name} [{i + 1}/{len(ann.symbol)}]")
+                label = "slash"
+            elif label == '|':
+                label = "pipe"
+            elif label == '*':
+                label = "asterisk"
+            elif label == "\"":
+                label = "quote"
+            # print(f"{name} {sig_name} [{i + 1}/{len(ann.symbol)}]", end='\r')
             if isinstance(mode, int):
                 left, right = peak - mode // 2, peak + mode // 2
             elif isinstance(mode, list):
@@ -68,11 +74,11 @@ def main():
                 filename = os.path.join(d2_data_dir, f"{peak}.png")
                 plot(signal[left:right], filename)
 
-    print("Data generation done!")
+    print(f"Data generation of {name} record done!")
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
 """
@@ -86,17 +92,15 @@ ann_labels = [
     AnnotationLabel(6, "F", "FUSION", "Fusion of ventricular and normal beat"),
     AnnotationLabel(7, "J", "NPC", "Nodal (junctional) premature beat"),
     AnnotationLabel(8, "A", "APC", "Atrial premature contraction"),
-    AnnotationLabel(
-        9, "S", "SVPB", "Premature or ectopic supraventricular beat"
-    ),
+    AnnotationLabel(9, "S", "SVPB", "Premature or ectopic supraventricular beat"),
     AnnotationLabel(10, "E", "VESC", "Ventricular escape beat"),
     AnnotationLabel(11, "j", "NESC", "Nodal (junctional) escape beat"),
     AnnotationLabel(12, "/", "PACE", "Paced beat"),
     AnnotationLabel(13, "Q", "UNKNOWN", "Unclassifiable beat"),
     AnnotationLabel(14, "~", "NOISE", "Signal quality change"),
-    # AnnotationLabel(15, None, None, None),
+    AnnotationLabel(15, None, None, None),
     AnnotationLabel(16, "|", "ARFCT", "Isolated QRS-like artifact"),
-    # AnnotationLabel(17, None, None, None),
+    AnnotationLabel(17, None, None, None),
     AnnotationLabel(18, "s", "STCH", "ST change"),
     AnnotationLabel(19, "T", "TCH", "T-wave change"),
     AnnotationLabel(20, "*", "SYSTOLE", "Systole"),
@@ -111,31 +115,23 @@ ann_labels = [
     AnnotationLabel(29, "u", "UWAVE", "U-wave peak"),
     AnnotationLabel(30, "?", "LEARN", "Learning"),
     AnnotationLabel(31, "!", "FLWAV", "Ventricular flutter wave"),
-    AnnotationLabel(
-        32, "[", "VFON", "Start of ventricular flutter/fibrillation"
-    ),
-    AnnotationLabel(
-        33, "]", "VFOFF", "End of ventricular flutter/fibrillation"
-    ),
+    AnnotationLabel(32, "[", "VFON", "Start of ventricular flutter/fibrillation"),
+    AnnotationLabel(33, "]", "VFOFF", "End of ventricular flutter/fibrillation"),
     AnnotationLabel(34, "e", "AESC", "Atrial escape beat"),
     AnnotationLabel(35, "n", "SVESC", "Supraventricular escape beat"),
-    AnnotationLabel(
-        36, "@", "LINK", "Link to external data (aux_note contains URL)"
-    ),
+    AnnotationLabel(36, "@", "LINK", "Link to external data (aux_note contains URL)"),
     AnnotationLabel(37, "x", "NAPC", "Non-conducted P-wave (blocked APB)"),
     AnnotationLabel(38, "f", "PFUS", "Fusion of paced and normal beat"),
     AnnotationLabel(39, "(", "WFON", "Waveform onset"),
     AnnotationLabel(40, ")", "WFOFF", "Waveform end"),
-    AnnotationLabel(
-        41, "r", "RONT", "R-on-T premature ventricular contraction"
-    ),
-    # AnnotationLabel(42, None, None, None),
-    # AnnotationLabel(43, None, None, None),
-    # AnnotationLabel(44, None, None, None),
-    # AnnotationLabel(45, None, None, None),
-    # AnnotationLabel(46, None, None, None),
-    # AnnotationLabel(47, None, None, None),
-    # AnnotationLabel(48, None, None, None),
-    # AnnotationLabel(49, None, None, None),
+    AnnotationLabel(41, "r", "RONT", "R-on-T premature ventricular contraction"),
+    AnnotationLabel(42, None, None, None),
+    AnnotationLabel(43, None, None, None),
+    AnnotationLabel(44, None, None, None),
+    AnnotationLabel(45, None, None, None),
+    AnnotationLabel(46, None, None, None),
+    AnnotationLabel(47, None, None, None),
+    AnnotationLabel(48, None, None, None),
+    AnnotationLabel(49, None, None, None),
 ]
 """

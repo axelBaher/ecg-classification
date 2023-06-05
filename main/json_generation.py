@@ -27,14 +27,14 @@ def get_slash():
 slash = get_slash()
 CLASSES = ['N', 'V', slash, 'R', 'L', 'A', '!', 'E']
 LEAD = "MLII"
-EXTENSION = "npy"  # npy or png
+EXTENSION = "png"  # npy or png
 DATA_PATH = osp.abspath(f"../data/*/*/*/*/*.{EXTENSION}")
-VAL_SIZE = 0.1
+VAL_SIZE = 0.3
 OUTPUT_PATH = '/'.join(DATA_PATH.split(slash)[:-5])
 RANDOM_STATE = 7
 
 
-def main():
+def json_gen():
     dataset = list()
     for file in glob(DATA_PATH):
         # * - unpacking operator,  _, _, _, _, _, will be equivalent for *_
@@ -67,7 +67,3 @@ def main():
         file.write(json.dumps(label_dict, indent=1))
 
     print("JSON generation done!")
-
-
-if __name__ == "__main__":
-    main()
