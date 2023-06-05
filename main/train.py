@@ -1,21 +1,43 @@
 from tensorflow import keras
-import model as m
+import models as m
 import dataloader as dl
 import numpy as np
+import os
 
-EPOCHS = 5
-NUM_CLASSES = 8
+
+EPOCHS = 1
+NUM_CLASSES = 3
 BATCH_SIZE = 16
 EXTENSION = "png"
 
 
-def train(model: keras.Sequential):
-    print("Model compiling!")
-    model.compile(optimizer="adam",
-                  loss="categorical_crossentropy",
-                  metrics=["accuracy"])
-    print("Model compiled!\n")
-    # (33 + 2238 + 1) * 2 = 4544
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+
+def temp_label_split(data):
+    labels = list()
+    for elem in data:
+        label = elem["label"]
+        match label:
+            case "N":
+                label = 0
+            case "A":
+                label = 1
+            case "V":
+                label = 2
+        labels.append(label)
+    return labels
+
+
+def save_training_weights():
+    pass
+
+
+def data_processing():
+    pass
+
+
+def train(model: keras.Sequential, model_name: str):
     print("Getting train, valid data!")
     train_data = dl.DataLoader(data_name="train",
                                batch_size=BATCH_SIZE,
@@ -32,49 +54,36 @@ def train(model: keras.Sequential):
     train_data_values = train_data.get_data()
     valid_data_values = valid_data.get_data()
     print("Train, valid data values obtained!\n")
-    train_data_labels = list()
-    valid_data_labels = list()
-    for elem in train_data.data:
-        label = elem["label"]
-        match label:
-            case "N":
-                label = 0
-            case "A":
-                label = 1
-            case "V":
-                label = 2
-        train_data_labels.append(label)
-    for elem in valid_data.data:
-        label = elem["label"]
-        match label:
-            case "N":
-                label = 0
-            case "A":
-                label = 1
-            case "V":
-                label = 2
-        valid_data_labels.append(label)
+    train_data_labels = temp_label_split(train_data.data)
+    valid_data_labels = temp_label_split(valid_data.data)
     train_data_values = np.expand_dims(train_data_values, axis=3)
     valid_data_values = np.expand_dims(valid_data_values, axis=3)
-    train_data_labels = keras.utils.to_categorical(train_data_labels, 64)
-    valid_data_labels = keras.utils.to_categorical(valid_data_labels, 64)
-    history = model.fit(
+    train_data_labels = keras.utils.to_categorical(train_data_labels, NUM_CLASSES)
+    valid_data_labels = keras.utils.to_categorical(valid_data_labels, NUM_CLASSES)
+
+    print(f"Model {model_name} training started!")
+    model.fit(
         x=train_data_values, y=train_data_labels,
         batch_size=BATCH_SIZE, epochs=EPOCHS,
-        validation_data=(valid_data_values, valid_data_labels))
-    print(history)
+        validation_split=0.15)
+
+    log = model.evaluate(valid_data_values, valid_data_labels)
+
+    print(f"Model {model_name} log:")
+    print(f"Loss function value:\n{log[0]}")
+    print(f"Accuracy value:\n{log[1]}")
 
 
 def main():
     print("Start!\n")
     print("Model generating!")
-    model = m.ResNet34()
-    print("Model generated!\n")
+    model = m.ModelLeNet5()
+    print(f"Model {model.model_name} generated!\n")
     print("Model building!")
-    model.build(input_shape=(1, 128, 128, 1))
-    print("Model builded!\n")
+    model.model.build(input_shape=(1, 128, 128, 1))
+    print(f"Model {model.model_name} builded!\n")
     print("Entering train loop!")
-    train(model)
+    train(model.model, model.model_name)
 
 
 if __name__ == "__main__":
