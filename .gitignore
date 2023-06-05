@@ -1,8 +1,7 @@
 /data/
-/main/mit-bih/
 /main/__pycache__/
 .idea/
 /venv/
-/main/mit-bih/11?.*
-/main/mit-bih/12?.*
-/main/mit-bih/2??.*
+/mit-bih/11?.*
+/mit-bih/12?.*
+/mit-bih/2??.*
