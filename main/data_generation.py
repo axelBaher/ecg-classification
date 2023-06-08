@@ -43,7 +43,8 @@ def data_gen(ecg):
         if not np.all(np.isfinite(signal)):
             continue
         signal = scale(signal)
-        for i, (label, peak) in tqdm(enumerate(zip(ann.symbol, ann.sample)), total=len(ann.sample), desc="Peaks read"):
+        for i, (label, peak) in tqdm(enumerate(zip(ann.symbol, ann.sample)), total=len(ann.sample),
+                                     desc=f"Record {name}, lead {sig_name}"):
             if label == '/':
                 label = "slash"
             elif label == '|':
