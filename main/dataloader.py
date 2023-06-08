@@ -3,9 +3,9 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 
-ANNOTATION_PATH = {"train": "../data/train.json",
-                   "test": "../data/test.json"}
-MAPPING_PATH = "../data/class-mapper.json"
+ANNOTATION_PATH = {"train": "data/train.json",
+                   "test": "data/test.json"}
+MAPPING_PATH = "data/class-mapper.json"
 
 
 class DataLoader:
@@ -28,7 +28,6 @@ class DataLoader:
                 for elem, i in tqdm(zip(self.data, range(len(self.data))), total=len(self.data), desc="Files read"):
                     img = np.float16(cv2.imread(elem["path"], cv2.IMREAD_GRAYSCALE))
                     data.append(img)
-        # data = np.array_split(np.array(data), self.samples_num)
         return data
 
     def data_split(self):

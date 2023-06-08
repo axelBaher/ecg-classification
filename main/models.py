@@ -1,11 +1,14 @@
+import keras
 from keras import Model, Sequential
 from keras.layers import *
 
 
-class ModelLeNet5:
+# Maybe it will be good, if I write data from config to model object.
+class ModelLeNet5(keras.Sequential):
     def __init__(self):
+        super().__init__()
         self.model_name = "LeNet-5"
-        print(f"Start generating model {self.model_name} generating!")
+        print(f"Start generating model {self.model_name}!")
         self.model = self.construct_model("categorical_crossentropy", "adam")
         print(f"Model {self.model_name} generated!")
 
@@ -19,15 +22,15 @@ class ModelLeNet5:
         model.add(Flatten())
         model.add(Dense(units=120, activation="relu"))
         model.add(Dense(units=84, activation="relu"))
-        model.add(Dense(units=3, activation="softmax"))
-        model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
+        model.add(Dense(units=8, activation="softmax"))
         return model
 
 
-class ModelAlexNet:
+class ModelAlexNet(keras.Sequential):
     def __init__(self):
+        super().__init__()
         self.model_name = "AlexNet"
-        print(f"Start generating model {self.model_name} generating!")
+        print(f"Start generating model {self.model_name}!")
         self.model = self.construct_model("categorical_crossentropy", "adam")
         print(f"Model {self.model_name} generated!")
 
@@ -52,10 +55,11 @@ class ModelAlexNet:
         return model
 
 
-class ModelVGGNetD:
+class ModelVGGNetD(keras.Sequential):
     def __init__(self):
+        super().__init__()
         self.model_name = "VGGNet-D"
-        print(f"Start generating model {self.model_name} generating!")
+        print(f"Start generating model {self.model_name}!")
         self.model = self.construct_model("categorical_crossentropy", "adam")
         print(f"Model {self.model_name} generated!")
 
@@ -103,7 +107,7 @@ class ModelVGGNetD:
         model.add(Flatten())
         model.add(Dense(4096, activation="relu"))
         model.add(Dense(4096, activation="relu"))
-        model.add(Dense(3, activation="softmax"))
+        model.add(Dense(8, activation="softmax"))
 
         model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
         return model
@@ -113,7 +117,7 @@ class ModelGoogLeNet:
     def __init__(self, input_shape=(128, 128, 1)):
         self.input_shape = input_shape
         self.model_name = "GoogLeNet"
-        print(f"Start generating model {self.model_name} generating!")
+        print(f"Start generating model {self.model_name}!")
         self.model = self.build("categorical_crossentropy", "adam")
         print(f"Model {self.model_name} generated!")
 
@@ -153,7 +157,7 @@ class ModelGoogLeNet:
         x1 = Flatten()(x1)
         x1 = Dense(1024, activation="relu")(x1)
         x1 = Dropout(0.7)(x1)
-        x1 = Dense(3, activation="softmax")(x1)
+        x1 = Dense(8, activation="softmax")(x1)
 
         x = self.inception_block(x, f1=160, f2_conv1=112, f2_conv3=224, f3_conv1=24, f3_conv5=64, f4=64)
         x = self.inception_block(x, f1=128, f2_conv1=128, f2_conv3=256, f3_conv1=24, f3_conv5=64, f4=64)
@@ -164,7 +168,7 @@ class ModelGoogLeNet:
         x2 = Flatten()(x2)
         x2 = Dense(1024, activation="relu")(x2)
         x2 = Dropout(0.7)(x2)
-        x2 = Dense(3, activation="softmax")(x2)
+        x2 = Dense(8, activation="softmax")(x2)
 
         x = self.inception_block(x, f1=256, f2_conv1=160, f2_conv3=320, f3_conv1=32, f3_conv5=128, f4=128)
         x = MaxPooling2D(pool_size=(3, 3), strides=2)(x)
@@ -173,7 +177,7 @@ class ModelGoogLeNet:
 
         x = GlobalAveragePooling2D(name="GAPL")(x)
         x = Dropout(0.4)(x)
-        x = Dense(3, activation="softmax")(x)
+        x = Dense(8, activation="softmax")(x)
 
         model = Model(input_layer, [x, x1, x2], name="GoogLeNet")
         model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
@@ -185,7 +189,7 @@ class ModelResNet34:
         self.model_name = "ResNet-34"
         self.input_shape = input_shape
         self.num_classes = num_classes
-        print(f"Start generating model {self.model_name} generating!")
+        print(f"Start generating model {self.model_name}!")
         self.model = self.construct_model("categorical_crossentropy", "adam")
         print(f"Model {self.model_name} generated!")
 

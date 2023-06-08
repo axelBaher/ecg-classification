@@ -78,10 +78,6 @@ def data_gen(ecg):
     print(f"Data generation of {name} record done!")
 
 
-# if __name__ == "__main__":
-#     main()
-
-
 """
 ann_labels = [
     AnnotationLabel(0, " ", "NOTANN", "Not an actual annotation"),
