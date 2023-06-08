@@ -43,8 +43,8 @@ def train(model: keras.Sequential, model_name: str):
                                batch_size=BATCH_SIZE,
                                extension=EXTENSION)
     test_data = dl.DataLoader(data_name="test",
-                               batch_size=BATCH_SIZE,
-                               extension=EXTENSION)
+                              batch_size=BATCH_SIZE,
+                              extension=EXTENSION)
     print("Data obtained!\n")
     # print("Splitting data by labels!")
     # train_data_splitted = train_data.data_split()

@@ -12,4 +12,21 @@ from tqdm import tqdm
 import prep
 
 
-prep.main()
+def generate_models():
+    models = dict({
+        "LeNet5": m.ModelLeNet5(),
+        "AlexNet": m.ModelAlexNet(),
+        "VGGNetD": m.ModelVGGNetD(),
+        "GoogLeNet": m.ModelGoogLeNet(),
+        "ResNet34": m.ModelResNet34()
+    })
+    return models
+
+
+def main():
+
+    prep.main()
+
+
+if __name__ == "__main__":
+    main()
