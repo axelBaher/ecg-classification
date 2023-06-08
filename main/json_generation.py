@@ -54,10 +54,10 @@ def json_gen():
     data = data[data["label"].isin(CLASSES)]
     data = data.sample(frac=1, random_state=RANDOM_STATE)
 
-    train, valid = train_test_split(data, test_size=VAL_SIZE)
+    train, test = train_test_split(data, test_size=VAL_SIZE)
 
     train.to_json(osp.join(OUTPUT_PATH, "train.json"), orient="records")
-    valid.to_json(osp.join(OUTPUT_PATH, "validation.json"), orient="records")
+    test.to_json(osp.join(OUTPUT_PATH, "test.json"), orient="records")
 
     label_dict = dict()
     for label in train.label.unique():

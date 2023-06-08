@@ -4,8 +4,8 @@ import cv2
 from tqdm import tqdm
 
 ANNOTATION_PATH = {"train": "../data/train.json",
-                   "valid": "../data/validation.json"}
-MAPPING_PATH = "../data/class-mapper.json"  # C:/Bachelor-diploma/Code/data/class-mapper.json
+                   "test": "../data/test.json"}
+MAPPING_PATH = "../data/class-mapper.json"
 
 
 class DataLoader:
