@@ -30,6 +30,8 @@ def download_db():
                     extracted_files += 1
                     pbar.update(1)
         os.rename("../mit-bih-arrhythmia-database-1.0.0", "../mit-bih")
+        os.remove("../mit-bih/mitdbdir")
+        os.remove("../mit-bih/x_mitdb")
         os.remove(archive_path)
     else:
         print("Database already downloaded and unzipped!")
