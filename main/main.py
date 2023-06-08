@@ -11,9 +11,10 @@ from keras import applications
 from keras.models import Sequential
 from keras.layers import Conv2D, Dense, AveragePooling2D, MaxPooling2D, Flatten, Dropout, Input, concatenate, \
     GlobalAveragePooling2D, BatchNormalization, Activation, Add
-import pydot
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 
 def signal_to_spectrogram():
     # Using DFT to convert 1D signal array to spectrogram
@@ -58,7 +59,7 @@ def check_cuda_availability():
 
 
 def main():
-    # check_cuda_availability()
+    check_cuda_availability()
     # train.main()
     # lenet5 = ModelLeNet5()
     # alexnet = ModelAlexNet()
