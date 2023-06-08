@@ -3,9 +3,9 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 
-ANNOTATION_PATH = {"train": "data/train.json",
-                   "test": "data/test.json"}
-MAPPING_PATH = "data/class-mapper.json"
+ANNOTATION_PATH = {"train": "../data/train.json",
+                   "test": "../data/test.json"}
+MAPPING_PATH = "../data/class-mapper.json"
 
 
 class DataLoader:
@@ -21,11 +21,15 @@ class DataLoader:
         data = list()
         match self.extension:
             case "npy":
-                for elem, i in zip(self.data, range(len(self.data))):
+                for elem, i in tqdm(zip(self.data, range(len(self.data))),
+                                    total=len(self.data),
+                                    desc=f"Files read ({self.data_name})"):
                     print(f"{i}/{len(self.data)} files read", end='\r')
                     data.append(np.load(elem["path"]))
             case "png":
-                for elem, i in tqdm(zip(self.data, range(len(self.data))), total=len(self.data), desc="Files read"):
+                for elem, i in tqdm(zip(self.data, range(len(self.data))),
+                                    total=len(self.data),
+                                    desc=f"Files read ({self.data_name})"):
                     img = np.float16(cv2.imread(elem["path"], cv2.IMREAD_GRAYSCALE))
                     data.append(img)
         return data

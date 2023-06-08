@@ -9,7 +9,7 @@
 ## Preparing system:
 
 1. Install Git:  
-Оn linux:  
+Оn Linux:  
 `sudo apt install git` or `sudo dnf install git-all`  
 Оn Windows:  
 https://git-scm.com/download/win
@@ -19,13 +19,23 @@ On Linux:
 On Windows:  
 https://www.python.org/downloads/
 3. Clone repository: `git clone https://github.com/axelBaher/ecg-classification.git`
-4. Setup virtual environment and install packages into it: `cd main && python setup.py`
-5. Install requirements: `pip install -r requirements.txt`
+4. Setup virtual environment and install packages into it:   
+`python setup.py`  
+If script doesn't work for whatever reason, just run this command:  
+`pip install -r requirements.txt`
+In this way, all the packages will be installed in your main (system) Python path.
+5. Get necessary db and generate data:  
+`python prep.py`
 
-
-[//]: # (1. Download database and generate data: `cd main && python prep.py`)
-
-[//]: # (5. Run training: `python train.py --config configs/training/{config}.json` W.I.P)
+## Train
+To start training, you need to run this command, in the figure brackets you need to type model, which will be trained:
+`python train.py --config {model_name}`  
+There are five models to choose (type exactly, as it will be written below):  
+LeNet5  
+AlexNet  
+VGGNetD  
+GoogLeNet  
+ResNet34  
 
 [//]: # (## Testing:)
 

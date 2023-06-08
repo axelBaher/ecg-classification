@@ -5,24 +5,25 @@ from keras.layers import *
 
 # Maybe it will be good, if I write data from config to model object.
 class ModelLeNet5(keras.Sequential):
-    def __init__(self):
+    def __init__(self, input_shape, num_classes):
         super().__init__()
         self.model_name = "LeNet-5"
+        self.num_classes = num_classes
+        self.input_data_shape = input_shape
         print(f"Start generating model {self.model_name}!")
-        self.model = self.construct_model("categorical_crossentropy", "adam")
+        self.model = self.construct_model()
         print(f"Model {self.model_name} generated!")
 
-    @staticmethod
-    def construct_model(loss, optimizer):
+    def construct_model(self):
         model = Sequential()
-        model.add(Conv2D(filters=6, kernel_size=(3, 3), activation="relu", input_shape=(128, 128, 1)))
+        model.add(Conv2D(filters=6, kernel_size=(3, 3), activation="relu", input_shape=self.input_data_shape))
         model.add(AveragePooling2D())
         model.add(Conv2D(filters=16, kernel_size=(3, 3), activation="relu"))
         model.add(AveragePooling2D())
         model.add(Flatten())
         model.add(Dense(units=120, activation="relu"))
         model.add(Dense(units=84, activation="relu"))
-        model.add(Dense(units=8, activation="softmax"))
+        model.add(Dense(units=self.num_classes, activation="softmax"))
         return model
 
 
