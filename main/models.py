@@ -19,7 +19,7 @@ class ModelLeNet5:
         model.add(Flatten())
         model.add(Dense(units=120, activation="relu"))
         model.add(Dense(units=84, activation="relu"))
-        model.add(Dense(units=8, activation="softmax"))
+        model.add(Dense(units=3, activation="softmax"))
         model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
         return model
 
@@ -47,7 +47,7 @@ class ModelAlexNet:
         model.add(Dropout(0.5))
         model.add(Dense(4096, activation="relu"))
         model.add(Dropout(0.5))
-        model.add(Dense(8, activation="softmax"))
+        model.add(Dense(3, activation="softmax"))
         model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
         return model
 
