@@ -5,3 +5,5 @@
 /mit-bih/11?.*
 /mit-bih/12?.*
 /mit-bih/2??.*
+/weights/
+/main/model_figures/
