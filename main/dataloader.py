@@ -25,7 +25,9 @@ class DataLoader:
                     print(f"{i}/{len(self.data)} files read", end='\r')
                     data.append(np.load(elem["path"]))
             case "png":
-                for elem, i in tqdm(zip(self.data, range(len(self.data))), total=len(self.data), desc="Files read"):
+                for elem, i in tqdm(zip(self.data, range(len(self.data))),
+                                    total=len(self.data),
+                                    desc=f"Files read ({self.data_name})"):
                     img = np.float16(cv2.imread(elem["path"], cv2.IMREAD_GRAYSCALE))
                     data.append(img)
         # data = np.array_split(np.array(data), self.samples_num)

@@ -103,7 +103,7 @@ class ModelVGGNetD:
         model.add(Flatten())
         model.add(Dense(4096, activation="relu"))
         model.add(Dense(4096, activation="relu"))
-        model.add(Dense(8, activation="softmax"))
+        model.add(Dense(3, activation="softmax"))
 
         model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
         return model
@@ -153,7 +153,7 @@ class ModelGoogLeNet:
         x1 = Flatten()(x1)
         x1 = Dense(1024, activation="relu")(x1)
         x1 = Dropout(0.7)(x1)
-        x1 = Dense(8, activation="softmax")(x1)
+        x1 = Dense(3, activation="softmax")(x1)
 
         x = self.inception_block(x, f1=160, f2_conv1=112, f2_conv3=224, f3_conv1=24, f3_conv5=64, f4=64)
         x = self.inception_block(x, f1=128, f2_conv1=128, f2_conv3=256, f3_conv1=24, f3_conv5=64, f4=64)
@@ -164,7 +164,7 @@ class ModelGoogLeNet:
         x2 = Flatten()(x2)
         x2 = Dense(1024, activation="relu")(x2)
         x2 = Dropout(0.7)(x2)
-        x2 = Dense(8, activation="softmax")(x2)
+        x2 = Dense(3, activation="softmax")(x2)
 
         x = self.inception_block(x, f1=256, f2_conv1=160, f2_conv3=320, f3_conv1=32, f3_conv5=128, f4=128)
         x = MaxPooling2D(pool_size=(3, 3), strides=2)(x)
@@ -173,7 +173,7 @@ class ModelGoogLeNet:
 
         x = GlobalAveragePooling2D(name="GAPL")(x)
         x = Dropout(0.4)(x)
-        x = Dense(8, activation="softmax")(x)
+        x = Dense(3, activation="softmax")(x)
 
         model = Model(input_layer, [x, x1, x2], name="GoogLeNet")
         model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
