@@ -11,7 +11,7 @@ from tqdm import tqdm
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 INSTALL_DB = 1
-NUMBER_OF_RECORDS = 5
+NUMBER_OF_RECORDS = 3
 
 
 def download_db():
@@ -31,7 +31,14 @@ def download_db():
                     pbar.update(1)
         os.rename("../mit-bih-arrhythmia-database-1.0.0", "../mit-bih")
         os.remove(archive_path)
+        os.remove("../mit-bih/mitdbdir")
+        os.remove("../mit-bih/x_mitdb")
     else:
+        if os.path.exists(archive_path):
+            os.remove(archive_path)
+        if os.path.exists("../mit-bih/mitdbdir") and os.path.exists("../mit-bih/x_mitdb"):
+            os.remove("../mit-bih/mitdbdir")
+            os.remove("../mit-bih/x_mitdb")
         print("Database already downloaded and unzipped!")
 
 

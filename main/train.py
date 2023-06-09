@@ -4,14 +4,17 @@ import dataloader as dl
 import numpy as np
 import os
 import argparse
+from time import gmtime, strftime
 
-EPOCHS = 1
-NUM_CLASSES = 8
-BATCH_SIZE = 16
+
+EPOCHS = 3
+NUM_CLASSES = 3
+BATCH_SIZE = 256
 EXTENSION = "png"
 VALIDATION_SPLIT = 0.15
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 def temp_label_split(data):
@@ -29,12 +32,13 @@ def temp_label_split(data):
     return labels
 
 
-def save_training_weights():
-    pass
-
-
-def data_processing():
-    pass
+def save_training_weights(model: keras.Sequential, model_name: str):
+    cur_date_time = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
+    file_name = f"{cur_date_time}.h5"
+    path = f"../weights/{model_name}"
+    os.makedirs(path, exist_ok=True)
+    model.save_weights(path + "\\" + file_name)
+    print(f"Model weights were saved into directory:\n{path + '/' + file_name}")
 
 
 def train(model: keras.Sequential, model_name: str):
@@ -46,10 +50,6 @@ def train(model: keras.Sequential, model_name: str):
                               batch_size=BATCH_SIZE,
                               extension=EXTENSION)
     print("Data obtained!\n")
-    # print("Splitting data by labels!")
-    # train_data_splitted = train_data.data_split()
-    # test_data_splitted = test_data.data_split()
-    # print("Data splitted by labels!\n")
     print("Getting data values!")
     train_data_values = train_data.get_data()
     test_data_values = test_data.get_data()
@@ -62,16 +62,22 @@ def train(model: keras.Sequential, model_name: str):
     test_data_labels = keras.utils.to_categorical(test_data_labels, NUM_CLASSES)
 
     print(f"Model {model_name} training started!")
-    model.fit(
+    train_log = model.fit(
         x=train_data_values, y=train_data_labels,
         batch_size=BATCH_SIZE, epochs=EPOCHS,
         validation_split=VALIDATION_SPLIT)
+    save_training_weights(model, model_name)
+    # model_1 = m.ModelLeNet5()
+    # model_1.model.load_weights("../weights/LeNet-5/2023-06-09_09-47-44.h5")
+    # print("Weights loaded!")
+    # model_1.model.build(input_shape=(1, 128, 128, 1))
+    # print("Testing new model with loaded weights!")
+    # log = model_1.model.evaluate(test_data_values, test_data_labels)
+    eval_log = model.evaluate(test_data_values, test_data_labels)
 
-    log = model.evaluate(test_data_values, test_data_labels)
-
-    print(f"Model {model_name} log:")
-    print(f"Loss function value:\n{log[0]}")
-    print(f"Accuracy value:\n{log[1]}\n")
+    # print(f"Model {model_name} log:")
+    # print(f"Loss function value:\n{eval_log[0]}")
+    # print(f"Accuracy value:\n{eval_log[1]}\n")
     print("End training!")
 
 
@@ -82,11 +88,8 @@ def parse_args():
 
 
 def main():
-    args = parse_args()
-    print("Start!\n")
-    print("Model generating!")
-    model = m.ModelLeNet5()
-    print(f"Model {model.model_name} generated!\n")
+    # args = parse_args()
+    model = m.ModelResNet34()
     print("Model building!")
     model.model.build(input_shape=(1, 128, 128, 1))
     print(f"Model {model.model_name} build!\n")

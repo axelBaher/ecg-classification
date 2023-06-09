@@ -6,6 +6,7 @@ from scipy import fft
 import matplotlib.pyplot as plt
 from visualkeras import layered_view
 from tensorflow.python.client import device_lib
+import models as m
 from keras import Model
 from keras import applications
 from keras.models import Sequential
@@ -59,7 +60,7 @@ def check_cuda_availability():
 
 
 def main():
-    check_cuda_availability()
+    # check_cuda_availability()
     # train.main()
     # lenet5 = ModelLeNet5()
     # alexnet = ModelAlexNet()
