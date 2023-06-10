@@ -1,7 +1,7 @@
 {
   "name": "LeNet5",
-  "epochs": 1,
-  "batch-size": 128,
+  "epochs": 3,
+  "batch-size": 16,
   "validation-split": 0.15,
   "loss": "categorical_crossentropy",
   "optimizer": "adam"

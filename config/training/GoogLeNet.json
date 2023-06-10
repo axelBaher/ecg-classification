@@ -2,6 +2,7 @@
   "name": "GoogLeNet",
   "epochs": 1,
   "batch-size": 128,
+  "validation-split": 0.15,
   "loss": "categorical_crossentropy",
   "optimizer": "adam"
 }

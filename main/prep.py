@@ -1,3 +1,5 @@
+import argparse
+import json
 from glob import glob
 import re
 import os
@@ -10,14 +12,11 @@ from tqdm import tqdm
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-INSTALL_DB = 1
-NUMBER_OF_RECORDS = 5
 
-
-def download_db():
+def download_db(install_db):
     archive_path = "../mit-bih.zip"
     db_exists = os.path.exists("../mit-bih")
-    if INSTALL_DB and (not db_exists):
+    if install_db and (not db_exists):
         url = "https://physionet.org/static/published-projects/mitdb/mit-bih-arrhythmia-database-1.0.0.zip"
         with tqdm(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc="Downloading mit-bih database") as t:
             urllib.request.urlretrieve(url, filename=archive_path, reporthook=lambda b, bsize, _: t.update(b))
@@ -30,10 +29,12 @@ def download_db():
                     extracted_files += 1
                     pbar.update(1)
         os.rename("../mit-bih-arrhythmia-database-1.0.0", "../mit-bih")
-        os.remove("../mit-bih/mitdbdir")
-        os.remove("../mit-bih/x_mitdb")
+        # os.remove("../mit-bih/mitdbdir")
+        # os.remove("../mit-bih/x_mitdb")
         os.remove(archive_path)
     else:
+        if os.path.exists(archive_path):
+            os.remove(archive_path)
         print("Database already downloaded and unzipped!")
 
 
@@ -49,11 +50,11 @@ def get_records_name(db_path):
     return records
 
 
-def generate_data():
+def generate_data(number_of_records):
     db_path = "../mit-bih"
     records = get_records_name(db_path)
     slash = jg.get_slash()
-    for record in records[:NUMBER_OF_RECORDS]:
+    for record in records[:number_of_records]:
         path_1d = slash.join(["..", "data", "1D", record])
         path_2d = slash.join(["..", "data", "2D", record])
         if not (os.path.exists(path_1d) and os.path.exists(path_2d)):
@@ -63,9 +64,19 @@ def generate_data():
     jg.json_gen()
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", required=True)
+    return parser.parse_args()
+
+
 def main():
-    download_db()
-    generate_data()
+    args = parse_args()
+    prep_config = args.config
+    with open(f"../config/{prep_config}.json") as f:
+        prep_config = json.load(f)
+    download_db(prep_config["install-db"])
+    generate_data(prep_config["num-of-records"])
 
 
 if __name__ == "__main__":

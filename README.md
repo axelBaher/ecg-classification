@@ -22,7 +22,7 @@ https://www.python.org/downloads/
 4. Setup virtual environment and install packages into it:   
 `python setup.py`  
 If script doesn't work for whatever reason, just run this command:  
-`pip install -r requirements.txt`
+`pip install -r requirements.txt`  
 In this way, all the packages will be installed in your main (system) Python path.
 5. Get necessary db and generate data:  
 `python prep.py`
@@ -31,11 +31,7 @@ In this way, all the packages will be installed in your main (system) Python pat
 To start training, you need to run this command, in the figure brackets you need to type model, which will be trained:
 `python train.py --config {model_name}`  
 There are five models to choose (type exactly, as it will be written below):  
-LeNet5  
-AlexNet  
-VGGNetD  
-GoogLeNet  
-ResNet34  
+LeNet5, AlexNet, VGGNetD, GoogLeNet, ResNet34
 
 [//]: # (## Testing:)
 

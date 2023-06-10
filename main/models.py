@@ -1,12 +1,65 @@
 import keras
 from keras import Model, Sequential
 from keras.layers import *
+import os
+import json
+import numpy as np
 
 
-# Maybe it will be good, if I write data from config to model object.
-class ModelLeNet5(keras.Sequential):
+def get_model_config(model_name):
+    model_config_path_abs = os.path.abspath(f"../{model_name}").split("\\")
+    model_config_path = "\\".join(model_config_path_abs[:-1]) + "\\" + \
+                        "\\".join(["config", "training", model_name]) + ".json"
+    try:
+        with open(model_config_path) as p:
+            model_config = json.load(p)
+    except FileNotFoundError:
+        print("Incorrect model name!")
+        exit(-1)
+    return model_config
+
+
+def get_model(model_config):
+    with open("../data/class-mapper.json") as f:
+        class_mapper = json.load(f)
+    model_name = model_config["name"]
+    model = None
+    match model_name:
+        case "LeNet5":
+            model = ModelLeNet5(input_shape=(128, 128, 1), num_classes=len(class_mapper))
+        case "AlexNet":
+            model = ModelAlexNet(input_shape=(128, 128, 1), num_classes=len(class_mapper))
+        case "VGGNetD":
+            model = ModelVGGNetD(input_shape=(128, 128, 1), num_classes=len(class_mapper))
+        case "GoogLeNet":
+            model = ModelGoogLeNet(input_shape=(128, 128, 1), num_classes=len(class_mapper))
+        case "ResNet34":
+            model = ModelResNet34(input_shape=(128, 128, 1), num_classes=len(class_mapper))
+    input_shape = np.expand_dims(model.input_data_shape, axis=0)
+    model.model.build(input_shape)
+    model.model.compile(loss=model_config["loss"],
+                        optimizer=model_config["optimizer"],
+                        metrics=["accuracy"])
+    return model
+
+
+def get_model_config_params(model_config, pipeline: bool = False):
+    # if not pipeline:
+    #     model = get_model(model_config)
+    #     model_name = model_config["name"]
+    #     epochs = model_config["epochs"]
+    #     batch_size = model_config["batch-size"]
+    #     validation_split = model_config["validation-split"]
+    # else:
+    model_name = model_config["name"]
+    epochs = model_config["epochs"]
+    batch_size = model_config["batch-size"]
+    validation_split = model_config["validation-split"]
+    return model_name, epochs, batch_size, validation_split
+
+
+class ModelLeNet5:
     def __init__(self, input_shape, num_classes):
-        super().__init__()
         self.model_name = "LeNet-5"
         self.num_classes = num_classes
         self.input_data_shape = input_shape
@@ -27,18 +80,19 @@ class ModelLeNet5(keras.Sequential):
         return model
 
 
-class ModelAlexNet(keras.Sequential):
-    def __init__(self):
-        super().__init__()
+class ModelAlexNet:
+    def __init__(self, input_shape=(128, 128, 1), num_classes=3):
         self.model_name = "AlexNet"
+        self.num_classes = num_classes
+        self.input_data_shape = input_shape
         print(f"Start generating model {self.model_name}!")
-        self.model = self.construct_model("categorical_crossentropy", "adam")
+        self.model = self.construct_model()
         print(f"Model {self.model_name} generated!")
 
-    @staticmethod
-    def construct_model(loss, optimizer):
+    def construct_model(self):
         model = Sequential()
-        model.add(Conv2D(96, kernel_size=(11, 11), strides=(4, 4), activation="relu", input_shape=(128, 128, 1)))
+        model.add(
+            Conv2D(96, kernel_size=(11, 11), strides=(4, 4), activation="relu", input_shape=self.input_data_shape))
         model.add(MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))
         model.add(Conv2D(256, kernel_size=(5, 5), activation="relu", padding="same"))
         model.add(MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))
@@ -51,17 +105,17 @@ class ModelAlexNet(keras.Sequential):
         model.add(Dropout(0.5))
         model.add(Dense(4096, activation="relu"))
         model.add(Dropout(0.5))
-        model.add(Dense(3, activation="softmax"))
-        model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
+        model.add(Dense(self.num_classes, activation="softmax"))
         return model
 
 
-class ModelVGGNetD(keras.Sequential):
-    def __init__(self):
-        super().__init__()
+class ModelVGGNetD:
+    def __init__(self, input_shape=(128, 128, 1), num_classes=3):
         self.model_name = "VGGNet-D"
+        self.num_classes = num_classes
+        self.input_data_shape = input_shape
         print(f"Start generating model {self.model_name}!")
-        self.model = self.construct_model("categorical_crossentropy", "adam")
+        self.model = self.construct_model()
         print(f"Model {self.model_name} generated!")
 
     def construct_block(self, layers_num: int,
@@ -79,11 +133,11 @@ class ModelVGGNetD(keras.Sequential):
                 self.model.add(AveragePooling2D(pool_size=pool_size,
                                                 strides=strides))
 
-    def construct_model(self, loss, optimizer):
+    def construct_model(self):
         model = Sequential()
         self.model = model
 
-        self.model.add(InputLayer(input_shape=(128, 128, 1)))
+        self.model.add(InputLayer(input_shape=self.input_data_shape))
 
         self.construct_block(layers_num=2,
                              filters=64, kernel_size=(3, 3),
@@ -108,18 +162,17 @@ class ModelVGGNetD(keras.Sequential):
         model.add(Flatten())
         model.add(Dense(4096, activation="relu"))
         model.add(Dense(4096, activation="relu"))
-        model.add(Dense(8, activation="softmax"))
-
-        model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
+        model.add(Dense(self.num_classes, activation="softmax"))
         return model
 
 
 class ModelGoogLeNet:
-    def __init__(self, input_shape=(128, 128, 1)):
-        self.input_shape = input_shape
+    def __init__(self, input_shape=(128, 128, 1), num_classes=3):
         self.model_name = "GoogLeNet"
+        self.input_data_shape = input_shape
+        self.num_classes = num_classes
         print(f"Start generating model {self.model_name}!")
-        self.model = self.build("categorical_crossentropy", "adam")
+        self.model = self.construct_model()
         print(f"Model {self.model_name} generated!")
 
     @staticmethod
@@ -139,8 +192,17 @@ class ModelGoogLeNet:
 
         return output_layer
 
-    def build(self, loss, optimizer):
-        input_layer = Input(shape=self.input_shape)
+    def construct_block(self, x):
+        _x = AveragePooling2D(pool_size=(5, 5), strides=3)(x)
+        _x = Conv2D(filters=128, kernel_size=(1, 1), padding="same", activation="relu")(_x)
+        _x = Flatten()(_x)
+        _x = Dense(1024, activation="relu")(_x)
+        _x = Dropout(0.7)(_x)
+        _x = Dense(self.num_classes, activation="softmax")(_x)
+        return _x
+
+    def construct_model(self):
+        input_layer = Input(shape=self.input_data_shape)
 
         x = Conv2D(filters=64, kernel_size=(7, 7), strides=2, padding="valid", activation="relu")(input_layer)
         x = MaxPooling2D(pool_size=(3, 3), strides=2)(x)
@@ -153,23 +215,27 @@ class ModelGoogLeNet:
         x = MaxPooling2D(pool_size=(3, 3), strides=2)(x)
         x = self.inception_block(x, f1=192, f2_conv1=96, f2_conv3=208, f3_conv1=16, f3_conv5=48, f4=64)
 
-        x1 = AveragePooling2D(pool_size=(5, 5), strides=3)(x)
-        x1 = Conv2D(filters=128, kernel_size=(1, 1), padding="same", activation="relu")(x1)
-        x1 = Flatten()(x1)
-        x1 = Dense(1024, activation="relu")(x1)
-        x1 = Dropout(0.7)(x1)
-        x1 = Dense(8, activation="softmax")(x1)
+        # x1 = AveragePooling2D(pool_size=(5, 5), strides=3)(x)
+        # x1 = Conv2D(filters=128, kernel_size=(1, 1), padding="same", activation="relu")(x1)
+        # x1 = Flatten()(x1)
+        # x1 = Dense(1024, activation="relu")(x1)
+        # x1 = Dropout(0.7)(x1)
+        # x1 = Dense(self.num_classes, activation="softmax")(x1)
+
+        x1 = self.construct_block(x)
 
         x = self.inception_block(x, f1=160, f2_conv1=112, f2_conv3=224, f3_conv1=24, f3_conv5=64, f4=64)
         x = self.inception_block(x, f1=128, f2_conv1=128, f2_conv3=256, f3_conv1=24, f3_conv5=64, f4=64)
         x = self.inception_block(x, f1=112, f2_conv1=144, f2_conv3=288, f3_conv1=32, f3_conv5=64, f4=64)
 
-        x2 = AveragePooling2D(pool_size=(5, 5), strides=3)(x)
-        x2 = Conv2D(filters=128, kernel_size=(1, 1), padding="same", activation="relu")(x2)
-        x2 = Flatten()(x2)
-        x2 = Dense(1024, activation="relu")(x2)
-        x2 = Dropout(0.7)(x2)
-        x2 = Dense(8, activation="softmax")(x2)
+        x2 = self.construct_block(x)
+
+        # x2 = AveragePooling2D(pool_size=(5, 5), strides=3)(x)
+        # x2 = Conv2D(filters=128, kernel_size=(1, 1), padding="same", activation="relu")(x2)
+        # x2 = Flatten()(x2)
+        # x2 = Dense(1024, activation="relu")(x2)
+        # x2 = Dropout(0.7)(x2)
+        # x2 = Dense(self.num_classes, activation="softmax")(x2)
 
         x = self.inception_block(x, f1=256, f2_conv1=160, f2_conv3=320, f3_conv1=32, f3_conv5=128, f4=128)
         x = MaxPooling2D(pool_size=(3, 3), strides=2)(x)
@@ -178,20 +244,19 @@ class ModelGoogLeNet:
 
         x = GlobalAveragePooling2D(name="GAPL")(x)
         x = Dropout(0.4)(x)
-        x = Dense(8, activation="softmax")(x)
+        x = Dense(self.num_classes, activation="softmax")(x)
 
         model = Model(input_layer, [x, x1, x2], name="GoogLeNet")
-        model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
         return model
 
 
 class ModelResNet34:
     def __init__(self, input_shape=(128, 128, 1), num_classes=3):
         self.model_name = "ResNet-34"
-        self.input_shape = input_shape
+        self.input_data_shape = input_shape
         self.num_classes = num_classes
         print(f"Start generating model {self.model_name}!")
-        self.model = self.construct_model("categorical_crossentropy", "adam")
+        self.model = self.construct_model()
         print(f"Model {self.model_name} generated!")
 
     @staticmethod
@@ -211,8 +276,8 @@ class ModelResNet34:
         x = Activation("relu")(x)
         return x
 
-    def construct_model(self, loss, optimizer):
-        input_tensor = Input(shape=self.input_shape)
+    def construct_model(self):
+        input_tensor = Input(shape=self.input_data_shape)
 
         x = Conv2D(64, kernel_size=(7, 7), strides=(2, 2), padding="same")(input_tensor)
         x = BatchNormalization()(x)
@@ -244,5 +309,4 @@ class ModelResNet34:
         x = Dense(self.num_classes, activation="softmax")(x)
 
         model = Model(inputs=input_tensor, outputs=x)
-        model.compile(loss=loss, optimizer=optimizer, metrics=["accuracy"])
         return model

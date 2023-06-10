@@ -1,27 +1,43 @@
 import train
+import inference
 import itertools
+import pytz
+from datetime import datetime
 
 
 def main():
-    epochs = list([1, 2, 3])
-    batch_size = list([16, 32, 256, 512])
-    validation_split = list([0.10, 0.15, 0.20])
-    loss = ["categorical_crossentropy"]
-    optimizer = ["adam"]
+    epochs = list([1, 2])
+    batch_size = list([32, 256])
+    validation_split = list([0.20])
+    # epochs = list([1])
+    # batch_size = list([256, 512])
+    # validation_split = list([0.10])
+    loss = [
+        "categorical_crossentropy"
+    ]
+    optimizer = [
+        "adam"
+    ]
     params = list([epochs, batch_size, validation_split, loss, optimizer])
     param_combs = list(itertools.product(*params))
     models = list([
-        "LeNet5"
-        # ,
-        # "AlexNet",
+        "LeNet5",
+        "AlexNet",
         # "GoogLeNet",
-        # "ResNet34",
+        # "ResNet34"
         # "VGGNetD"
     ])
+    train_values, train_labels = train.data_processing()
+    test_values, test_labels = inference.data_processing()
+    timezone = pytz.timezone("Europe/Moscow")
+    current_datetime = datetime.now(timezone)
+    cur_date_time = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
 
-    for model in models:
-        for param_config in param_combs:
-            print(f"\n\nModel: {model}\n"
+    for i, model in enumerate(models):
+        for j, param_config in enumerate(param_combs):
+            index = (j + (len(param_combs) * i)) + 1
+            print(f"\n\n{index}/{len(param_combs) * len(models)} model\n"
+                  f"Model: {model}\n"
                   f"Epochs: {param_config[0]}\n"
                   f"Batch size: {param_config[1]}\n"
                   f"Validation split: {param_config[2]}\n"
@@ -35,7 +51,8 @@ def main():
                 "loss": param_config[3],
                 "optimizer": param_config[4]
             }
-            train.train(model_config, pipeline=True)
+            train.train(model_config, train_values, train_labels, cur_date_time, pipeline=True)
+            inference.inference(model_config, test_values, test_labels, cur_date_time, pipeline=True)
 
 
 if __name__ == "__main__":
