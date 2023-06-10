@@ -21,9 +21,9 @@ def main():
     params = list([epochs, batch_size, validation_split, loss, optimizer])
     param_combs = list(itertools.product(*params))
     models = list([
-        "LeNet5",
-        "AlexNet",
-        # "GoogLeNet",
+        # "LeNet5",
+        # "AlexNet",
+        "GoogLeNet",
         # "ResNet34"
         # "VGGNetD"
     ])
@@ -36,7 +36,7 @@ def main():
     for i, model in enumerate(models):
         for j, param_config in enumerate(param_combs):
             index = (j + (len(param_combs) * i)) + 1
-            print(f"\n\n{index}/{len(param_combs) * len(models)} model\n"
+            print(f"\n\n{index}/{len(param_combs) * len(models)} pipeline iteration\n\n"
                   f"Model: {model}\n"
                   f"Epochs: {param_config[0]}\n"
                   f"Batch size: {param_config[1]}\n"
