@@ -74,7 +74,7 @@ def inference(model_config, test_values, test_labels, pipeline):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Models testing")
     parser.add_argument("-name", type=str,
                         help="Model name",
                         required=True)

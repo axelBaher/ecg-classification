@@ -65,7 +65,7 @@ def generate_data(number_of_records):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Downloading and preprocessing data")
     parser.add_argument("-db", help="Install db or not", type=bool, required=True)
     parser.add_argument("-rec", help="Number of records to generate", type=int, required=True)
     return parser.parse_args()

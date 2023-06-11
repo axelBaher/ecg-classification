@@ -47,7 +47,7 @@ def data_processing():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Model training")
     parser.add_argument("--config", required=True)
     return parser.parse_args()
 

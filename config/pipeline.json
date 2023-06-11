@@ -1,0 +1,26 @@
+{
+  "models": [
+    "LeNet5",
+    "AlexNet",
+    "GoogLeNet",
+    "ResNet34",
+    "VGGNetD"
+  ],
+  "epochs": [
+    1,
+    2
+  ],
+  "batch-size": [
+    32,
+    256
+  ],
+  "validation-split": [
+    0.20
+  ],
+  "loss": [
+    "categorical_crossentropy"
+  ],
+  "optimizer": [
+    "adam"
+  ]
+}
