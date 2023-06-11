@@ -6,7 +6,6 @@ import argparse
 
 script_dir = Path(__file__).resolve().parent
 venv_dir = script_dir / "venv"
-print(sys.executable)
 
 
 def create_virtual_environment():
