@@ -106,18 +106,8 @@ def main():
         "loss": "categorical_crossentropy" if args.loss is None else args.loss,
         "optimizer": "adam" if args.opt is None else args.opt,
     }
-    # if args.loss is None:
-    #     model_config["loss"] = "categorical_crossentropy"
-    # else:
-    #     model_config["loss"] = args.loss
-    # if args.opt is None:
-    #     model_config["optimizer"] = "adam"
-    # else:
-    #     model_config["optimizer"] = args.opt
-    print(model_config["loss"])
-    print(model_config["optimizer"])
-    # test_values, test_labels = data_processing()
-    # inference(model_config, test_values, test_labels, pipeline=False)
+    test_values, test_labels = data_processing()
+    inference(model_config, test_values, test_labels, pipeline=False)
 
 
 if __name__ == "__main__":
