@@ -48,7 +48,6 @@ def data_gen(ecg):
                 label = "asterisk"
             elif label == "\"":
                 label = "quote"
-            # print(f"{name} {sig_name} [{i + 1}/{len(ann.symbol)}]", end='\r')
             if isinstance(mode, int):
                 left, right = peak - mode // 2, peak + mode // 2
             elif isinstance(mode, list):

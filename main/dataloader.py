@@ -16,8 +16,6 @@ class DataLoader:
         self.data_name = data_name
         self.data = json.load(open(ANNOTATION_PATH[data_name]))
         self.mapper = json.load(open(MAPPING_PATH))
-        # self.batch_size = batch_size
-        # self.samples_num = int(np.ceil(len(self.data) / batch_size))
 
     def get_data(self):
         data = list()
