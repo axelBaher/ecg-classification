@@ -23,9 +23,8 @@ def get_config(config_name):
 
 
 def main():
-    # args = parse_args()
-    # config = args.config
-    config = "pipeline"
+    args = parse_args()
+    config = args.config
     config = get_config(config)
 
     params = list([
