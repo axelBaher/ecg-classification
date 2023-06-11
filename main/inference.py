@@ -1,13 +1,10 @@
 from tensorflow import keras
 import models as m
 import dataloader as dl
-import numpy as np
 import os
 import argparse
-import json
 from keras.callbacks import CSVLogger
-import pytz
-from datetime import datetime
+
 
 EXTENSION = "png"
 
@@ -29,16 +26,12 @@ def find_file(filename, search_path):
     return None
 
 
-def load_training_weights(model: keras.Sequential, model_config, cur_date_time, pipeline: bool = False):
+def load_training_weights(model: keras.Sequential, model_config):
     model_name = model_config["name"]
     epochs = model_config["epochs"]
     batch_size = model_config["batch-size"]
     validation_split = model_config["validation-split"]
     file_name = f"{epochs}-{batch_size}-{validation_split}.h5"
-    # if pipeline:
-    #     search_path = f"../weights/pipeline/{model_name}"
-    # else:
-    #     search_path = f"../weights/train/{model_name}"
     search_path = f"../weights/{model_name}"
     try:
         result = find_file(file_name, search_path)
@@ -50,7 +43,7 @@ def load_training_weights(model: keras.Sequential, model_config, cur_date_time, 
     return model
 
 
-def get_log_path(model_config, cur_date_time, pipeline: bool = False):
+def get_log_path(model_config, pipeline: bool = False):
     model_name, epochs, batch_size, validation_split = m.get_model_config_params(model_config)
     file_name = f"{epochs}-{batch_size}-{validation_split}.csv"
     if pipeline:
@@ -64,14 +57,13 @@ def get_log_path(model_config, cur_date_time, pipeline: bool = False):
     return csv_logger
 
 
-def inference(model_config, test_values, test_labels, cur_date_time, pipeline: bool = False):
-    # model, model_name, epochs, batch_size, validation_split = m.get_model_config_params(model_config, pipeline)
+def inference(model_config, test_values, test_labels, pipeline):
     model_name = model_config["name"]
     model = m.get_model(model_config)
     print(f"Model {model_name} testing started!")
 
-    csv_logger = get_log_path(model_config, cur_date_time, pipeline)
-    model = load_training_weights(model, model_config, cur_date_time, pipeline)
+    csv_logger = get_log_path(model_config, pipeline)
+    model = load_training_weights(model, model_config)
     history = model.model.evaluate(test_values, test_labels, callbacks=[csv_logger])
     history.insert(0, "accuracy")
     history.insert(0, "loss")
@@ -83,39 +75,49 @@ def inference(model_config, test_values, test_labels, cur_date_time, pipeline: b
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--name", type=str, required=True)
-    parser.add_argument("--epoch", type=int, required=True)
-    parser.add_argument("--b_size", type=int, required=True)
-    parser.add_argument("--val_split", type=float, required=True)
+    parser.add_argument("-name", type=str,
+                        help="Model name",
+                        required=True)
+    parser.add_argument("-epoch", type=int,
+                        help="Number of epochs were trained",
+                        required=True)
+    parser.add_argument("-b_size", type=int,
+                        help="Used batch size while training",
+                        required=True)
+    parser.add_argument("-val_split", type=float,
+                        help="Use validation split while training",
+                        required=True)
+    parser.add_argument("-loss", type=str,
+                        help="Used loss function (categorical_crossentropy - default)",
+                        required=False)
+    parser.add_argument("-opt", type=str,
+                        help="Used optimizer (adam - default)",
+                        required=False)
     return parser.parse_args()
 
 
 def main():
-    console = 0
-    if console:
-        args = parse_args()
-        model_config = {
-            "name": args.name,
-            "epochs": args.epoch,
-            "batch-size": args.b_size,
-            "validation-split": args.val_split,
-            "loss": "categorical_crossentropy",
-            "optimizer": "adam"
-        }
-    else:
-        model_config = {
-            "name": "LeNet5",
-            "epochs": 1,
-            "batch-size": 32,
-            "validation-split": 0.2,
-            "loss": "categorical_crossentropy",
-            "optimizer": "adam"
-        }
-    timezone = pytz.timezone('Europe/Moscow')
-    current_datetime = datetime.now(timezone)
-    cur_date_time = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
-    test_values, test_labels = data_processing()
-    inference(model_config, test_values, test_labels, cur_date_time)
+    args = parse_args()
+    model_config = {
+        "name": args.name,
+        "epochs": args.epoch,
+        "batch-size": args.b_size,
+        "validation-split": args.val_split,
+        "loss": "categorical_crossentropy" if args.loss is None else args.loss,
+        "optimizer": "adam" if args.opt is None else args.opt,
+    }
+    # if args.loss is None:
+    #     model_config["loss"] = "categorical_crossentropy"
+    # else:
+    #     model_config["loss"] = args.loss
+    # if args.opt is None:
+    #     model_config["optimizer"] = "adam"
+    # else:
+    #     model_config["optimizer"] = args.opt
+    print(model_config["loss"])
+    print(model_config["optimizer"])
+    # test_values, test_labels = data_processing()
+    # inference(model_config, test_values, test_labels, pipeline=False)
 
 
 if __name__ == "__main__":

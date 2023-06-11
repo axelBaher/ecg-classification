@@ -1,5 +1,4 @@
 import argparse
-import json
 from glob import glob
 import re
 import os
@@ -29,12 +28,13 @@ def download_db(install_db):
                     extracted_files += 1
                     pbar.update(1)
         os.rename("../mit-bih-arrhythmia-database-1.0.0", "../mit-bih")
-        # os.remove("../mit-bih/mitdbdir")
-        # os.remove("../mit-bih/x_mitdb")
         os.remove(archive_path)
     else:
         if os.path.exists(archive_path):
             os.remove(archive_path)
+        if not os.path.exists("../mit-bih"):
+            print("You need to install db!")
+            exit(-1)
         print("Database already downloaded and unzipped!")
 
 
@@ -66,15 +66,17 @@ def generate_data(number_of_records):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", required=True)
+    parser.add_argument("-db", help="Install db or not", type=bool, required=True)
+    parser.add_argument("-rec", help="Number of records to generate", type=int, required=True)
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    prep_config = args.config
-    with open(f"../config/{prep_config}.json") as f:
-        prep_config = json.load(f)
+    prep_config = {
+        "install-db": args.db,
+        "num-of-records": args.rec
+    }
     download_db(prep_config["install-db"])
     generate_data(prep_config["num-of-records"])
 

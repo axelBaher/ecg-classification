@@ -1,13 +1,9 @@
 from tensorflow import keras
 import models as m
 import dataloader as dl
-import numpy as np
 import os
 import argparse
-import json
 from keras.callbacks import CSVLogger
-import pytz
-from datetime import datetime
 
 
 EXTENSION = "png"
@@ -56,24 +52,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def train(model_config, train_values, train_labels, cur_date_time, pipeline: bool = False):
-    # if not pipeline:
-    #     model = get_model(model_config)
-    #     model_name = model_config["name"]
-    #     epochs = model_config["epochs"]
-    #     batch_size = model_config["batch-size"]
-    #     validation_split = model_config["validation-split"]
-    # else:
-    #     model = get_model(model_config)
-    #     model_name = model_config["name"]
-    #     epochs = model_config["epochs"]
-    #     batch_size = model_config["batch-size"]
-    #     validation_split = model_config["validation-split"]
-    # model_name, epochs, batch_size, validation_split = m.get_model_config_params(model_config)
+def train(model_config, train_values, train_labels, pipeline: bool = False):
     model = m.get_model(model_config)
     model_name = model_config["name"]
     print(f"Model {model_name} training started!")
-    csv_logger = get_log_path(model_config, cur_date_time)
+    csv_logger = get_log_path(model_config, pipeline)
     model.model.fit(
         x=train_values, y=train_labels,
         epochs=model_config["epochs"],
@@ -85,18 +68,11 @@ def train(model_config, train_values, train_labels, cur_date_time, pipeline: boo
 
 
 def main():
-    console = 1
-    if console:
-        args = parse_args()
-        model_name = args.config
-    else:
-        model_name = "LeNet5"
-    timezone = pytz.timezone('Europe/Moscow')
-    current_datetime = datetime.now(timezone)
-    cur_date_time = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
+    args = parse_args()
+    model_name = args.config
     model_config = m.get_model_config(model_name)
     train_values, train_labels = data_processing()
-    train(model_config, train_values, train_labels, cur_date_time)
+    train(model_config, train_values, train_labels)
 
 
 if __name__ == "__main__":

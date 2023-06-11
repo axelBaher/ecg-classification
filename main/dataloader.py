@@ -47,7 +47,6 @@ class DataLoader:
         labels = keras.utils.to_categorical(labels, len(class_mapper))
         return values, labels
 
-
     def data_split(self):
         def filter_func(a, b): return a["label"] == b
 

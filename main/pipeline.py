@@ -1,8 +1,6 @@
 import train
 import inference
 import itertools
-import pytz
-from datetime import datetime
 
 
 def main():
@@ -21,17 +19,14 @@ def main():
     params = list([epochs, batch_size, validation_split, loss, optimizer])
     param_combs = list(itertools.product(*params))
     models = list([
-        # "LeNet5",
-        # "AlexNet",
+        "LeNet5",
+        "AlexNet",
         "GoogLeNet",
-        # "ResNet34"
-        # "VGGNetD"
+        "ResNet34"
+        "VGGNetD"
     ])
     train_values, train_labels = train.data_processing()
     test_values, test_labels = inference.data_processing()
-    timezone = pytz.timezone("Europe/Moscow")
-    current_datetime = datetime.now(timezone)
-    cur_date_time = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
 
     for i, model in enumerate(models):
         for j, param_config in enumerate(param_combs):
@@ -51,8 +46,8 @@ def main():
                 "loss": param_config[3],
                 "optimizer": param_config[4]
             }
-            train.train(model_config, train_values, train_labels, cur_date_time, pipeline=True)
-            inference.inference(model_config, test_values, test_labels, cur_date_time, pipeline=True)
+            train.train(model_config, train_values, train_labels, pipeline=True)
+            inference.inference(model_config, test_values, test_labels, pipeline=True)
 
 
 if __name__ == "__main__":

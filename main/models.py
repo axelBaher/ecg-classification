@@ -1,4 +1,3 @@
-import keras
 from keras import Model, Sequential
 from keras.layers import *
 import os
@@ -43,14 +42,7 @@ def get_model(model_config):
     return model
 
 
-def get_model_config_params(model_config, pipeline: bool = False):
-    # if not pipeline:
-    #     model = get_model(model_config)
-    #     model_name = model_config["name"]
-    #     epochs = model_config["epochs"]
-    #     batch_size = model_config["batch-size"]
-    #     validation_split = model_config["validation-split"]
-    # else:
+def get_model_config_params(model_config):
     model_name = model_config["name"]
     epochs = model_config["epochs"]
     batch_size = model_config["batch-size"]

@@ -6,16 +6,11 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import scale
 from tqdm import tqdm
 
-
-# centering around peak
 mode = 128
 output_dir = "../data"
-
 image_size = 128
-
 fig = plt.figure()
 dpi = fig.dpi
-
 fig_size = (image_size / dpi, image_size / dpi)
 image_size = (image_size, image_size)
 
