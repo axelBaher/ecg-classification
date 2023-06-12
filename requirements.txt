@@ -10,3 +10,4 @@ scipy           ~= 1.10.1
 visualkeras     ~= 0.0.2
 pandas          ~= 2.0.1
 tqdm            ~= 4.65.0
+openpyxl        ~= 3.1.2
