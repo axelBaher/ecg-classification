@@ -95,17 +95,6 @@ def read_logs(mode):
                         iterations.append(data[head_delim * i:head_delim * (i + 1)])
                     # last_iter = iterations[-1]
                 main_frame = get_data_from_logs(main_frame, headers, iterations, filename, model)
-                # headers.insert(0, "validation_split")
-                # headers.insert(0, "batch_size")
-                # headers.insert(0, "epochs")
-                # headers.insert(0, "model")
-                # for i in range(len(iterations)):
-                #     iterations[i].insert(0, filename[2])
-                #     iterations[i].insert(0, filename[1])
-                #     iterations[i].insert(0, filename[0])
-                #     iterations[i].insert(0, model)
-                # df_iterations = pd.DataFrame(iterations, columns=headers)
-                # main_frame = pd.concat([main_frame, df_iterations], ignore_index=True)
             elif mode == "test":
                 head_delim = 2
                 headers, data = get_head_data(log_data, head_delim)
@@ -152,31 +141,29 @@ def generate_plot(data_path, mode):
     plt.xlabel("Model with params")
     plt.ylabel("Accuracy")
     plt.title("Accuracy/models")
-    plt.savefig(f"../result/{mode}/plot.png")
     plt.xticks(rotation=90)
+    plt.savefig(f"../result/{mode}/plot.png")
     plt.tight_layout()
     plt.show()
 
 
 def main():
-    # args = parse_args()
-    # mode = args.m
-    # just_plot = args.op
-    mode = "test"
-    just_plot = False
+    args = parse_args()
+    mode = args.m
+    just_plot = args.op
     res_path = f"../result/{mode}"
-    pd.set_option("display.max_rows", None)
-    pd.set_option("display.max_columns", None)
     if not just_plot:
+        pd.set_option("display.max_rows", None)
+        pd.set_option("display.max_columns", None)
         log_data = read_logs(mode)
         os.makedirs(res_path, exist_ok=True)
         log_data.to_csv(res_path + "/data.csv", index=False)
         log_data = pd.read_excel(res_path + "/data.xlsx")
         log_data.to_csv(res_path + "/data.csv", index=False)
-    if mode == "train":
-        print(f"Train result data has been generated into file:\n{res_path}/data.xlsx")
-    elif mode == "test":
-        print(f"Test result data has been generated into file:\n{res_path}/data.xlsx")
+        if mode == "train":
+            print(f"Train result data has been generated into file:\n{res_path}/data.xlsx")
+        elif mode == "test":
+            print(f"Test result data has been generated into file:\n{res_path}/data.xlsx")
     file_path = res_path + "/data.csv"
     generate_plot(file_path, mode)
 
